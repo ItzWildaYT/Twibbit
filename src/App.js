@@ -6,6 +6,8 @@ import TweetForm from "./TweetForm";
 import Feed from "./Feed";
 import Sidebar from "./Sidebar";
 import Rightbar from "./Rightbar";
+import TweetPage from "./TweetPage";
+
 import {
   BrowserRouter as Router,
   Routes,
