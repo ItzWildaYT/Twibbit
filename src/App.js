@@ -8,19 +8,29 @@ import Rightbar from "./Rightbar";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [needsName, setNeedsName] = useState(false);
 
- useEffect(() => {
-  const unsub = onAuthStateChanged(auth, async (user) => {
-    setUser(user);
-    if (user) {
-      await saveUserProfile(user);
-    }
-  });
-  return unsub;
-}, []);
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (!snap.exists()) {
+          setNeedsName(true);
+        }
+      }
+    });
+    return unsub;
+  }, []);
+
+  async function handleSaveName(name) {
+    await saveUserProfile(user, name);
+    setNeedsName(false);
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen text-gray-900">
+      {needsName && <UsernameModal onSave={handleSaveName} />}
       {/* Top bar */}
       <header className="bg-white shadow p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-blue-500">Twibbit</h1>
