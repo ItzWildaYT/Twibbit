@@ -7,7 +7,7 @@ This Project is currently under development and is overseen by the Krypton Commu
 Krypton Website: https://kryptoncodes.netlify.app/
 Discord Server: https://discord.gg/nAXzUxjUHD
 
-# This Project Is Fully Owned By Krypton and it's Team.
+## This Project Is Fully Owned By Krypton and it's Team.
 
-# Nackoo (Founder Of Krypton)
-# ItzWilda (Co-Founder Of Krypton)
+## - Nackoo (Owner Of Krypton)
+## - ItzWilda (Co-Founder Of Krypton)
