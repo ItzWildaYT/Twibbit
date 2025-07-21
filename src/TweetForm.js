@@ -13,7 +13,8 @@ export default function TweetForm({ user, customName }) {
     await addDoc(collection(db, "tweets"), {
       text: text.trim(),
       likes: [],
-      userName: customName,          // 👈 CUSTOM NAME
+      retweets: [],
+      userName: customName,          
       userPhoto: user.photoURL,
       userId: user.uid,
       createdAt: serverTimestamp(),
