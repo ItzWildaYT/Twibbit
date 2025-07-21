@@ -12,6 +12,7 @@ import {
   Route,
 } from "react-router-dom";
 
+// ✨ Modal for choosing a custom name
 function UsernameModal({ onSave }) {
   const [name, setName] = useState("");
 
@@ -42,6 +43,7 @@ function UsernameModal({ onSave }) {
   );
 }
 
+// ✨ Simple placeholder page
 function UnderConstruction() {
   return (
     <div className="text-center mt-20 text-xl font-bold">
@@ -53,17 +55,22 @@ function UnderConstruction() {
 export default function App() {
   const [user, setUser] = useState(null);
   const [needsName, setNeedsName] = useState(false);
+  const [customName, setCustomName] = useState("");
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        const snap = await getDoc(doc(db, "users", user.uid));
-        if (!snap.exists()) {
+    const unsub = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        const snap = await getDoc(doc(db, "users", currentUser.uid));
+        if (snap.exists()) {
+          setCustomName(snap.data().name); // ✅ fetch custom name
+          setNeedsName(false);
+        } else {
           setNeedsName(true);
         }
       } else {
         setNeedsName(false);
+        setCustomName("");
       }
     });
     return unsub;
@@ -72,6 +79,7 @@ export default function App() {
   async function handleSaveName(name) {
     try {
       await saveUserProfile(user, name);
+      setCustomName(name); // ✅ update state with new name
       setNeedsName(false);
     } catch (err) {
       alert(err.message);
@@ -117,7 +125,7 @@ export default function App() {
             <Sidebar />
           </div>
 
-          {/* Center feed with routing */}
+          {/* Center content with routing */}
           <main className="col-span-6 max-w-2xl mx-auto p-4">
             <Routes>
               <Route
@@ -125,7 +133,7 @@ export default function App() {
                 element={
                   user ? (
                     <>
-                      <TweetForm user={user} />
+                      <TweetForm user={user} customName={customName} />
                       <Feed user={user} />
                     </>
                   ) : (
