@@ -1,10 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { auth, loginWithGoogle, logout, saveUserProfile } from "./firebase";
+import { auth, loginWithGoogle, logout, saveUserProfile, db } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { getDoc, doc } from "firebase/firestore";
 import TweetForm from "./TweetForm";
 import Feed from "./Feed";
 import Sidebar from "./Sidebar";
 import Rightbar from "./Rightbar";
+
+function UsernameModal({ onSave }) {
+  const [name, setName] = useState("");
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+        <h2 className="text-xl font-bold mb-4">Choose your Twibbit name</h2>
+        <input
+          className="border w-full p-2 mb-4 rounded"
+          placeholder="Enter a name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button
+          onClick={() => {
+            if (!name.trim()) {
+              alert("Name cannot be empty");
+              return;
+            }
+            onSave(name.trim());
+          }}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -18,6 +49,8 @@ export default function App() {
         if (!snap.exists()) {
           setNeedsName(true);
         }
+      } else {
+        setNeedsName(false);
       }
     });
     return unsub;
@@ -69,9 +102,7 @@ export default function App() {
               <Feed user={user} />
             </>
           ) : (
-            <p className="text-center mt-20">
-              Sign in to post and like tweets.
-            </p>
+            <p className="text-center mt-20">Sign in to post and like tweets.</p>
           )}
         </main>
 
@@ -83,5 +114,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
