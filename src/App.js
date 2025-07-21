@@ -15,7 +15,7 @@ export default function App() {
   return (
     <div className="bg-gray-100 min-h-screen text-gray-900">
       <header className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-blue-500">Mini Twitter</h1>
+        <h1 className="text-xl font-bold text-blue-500">Twibbit</h1>
         {user ? (
           <div className="flex items-center gap-3">
             <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full" />
