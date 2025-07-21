@@ -1,6 +1,9 @@
 import React from "react";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "./firebase";
+import Replies from "./Replies";
+import Retweet from "./Retweet";
+import Share from "./Share";
 
 export default function Tweet({
   id,
@@ -10,7 +13,6 @@ export default function Tweet({
   userPhoto = "",
   currentUser
 }) {
-  // ✅ Ensure likes is always an array
   const safeLikes = Array.isArray(likes) ? likes : [];
   const liked = currentUser && safeLikes.includes(currentUser.uid);
 
@@ -18,41 +20,24 @@ export default function Tweet({
     if (!currentUser) return;
     const ref = doc(db, "tweets", id);
     await updateDoc(ref, {
-      likes: liked ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid)
+      likes: liked ? arrayRemove(currentUser.uid) : arrayUnion(currentUser.uid),
     });
-  }
-
-  function openReplies() {
-    // For now, just log or alert; later we can open a replies modal or section
-    alert(`Open replies for tweet ${id}`);
   }
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-4">
+      {/* Header */}
       <div className="flex items-center gap-2 mb-2">
-        {userPhoto && (
-          <img src={userPhoto} alt="" className="w-8 h-8 rounded-full" />
-        )}
+        {userPhoto && <img src={userPhoto} alt="" className="w-8 h-8 rounded-full" />}
         <span className="font-semibold">{userName}</span>
       </div>
+
+      {/* Text */}
       <p className="mb-2">{text}</p>
 
-      {/* Action bar */}
+      {/* Actions */}
       <div className="flex items-center gap-6 mt-2">
-        {/* Replies button */}
-        <button
-          onClick={openReplies}
-          className="flex items-center gap-1 text-gray-600 hover:text-blue-500"
-        >
-          <img
-            src="/reply-icon.png"
-            alt="reply"
-            className="w-5 h-5 inline-block"
-          />
-          <span>0</span> {/* later replace with reply count */}
-        </button>
-
-        {/* Likes button */}
+        <Replies tweetId={id} currentUser={currentUser} />
         <button
           onClick={toggleLike}
           className={`flex items-center gap-1 px-3 py-1 rounded transition ${
@@ -61,20 +46,13 @@ export default function Tweet({
         >
           ❤️ {safeLikes.length}
         </button>
-
-        {/* Retweet placeholder */}
-        <button className="flex items-center gap-1 text-gray-600 hover:text-green-500">
-          🔁 0
-        </button>
-
-        {/* Share placeholder */}
-        <button className="flex items-center gap-1 text-gray-600 hover:text-blue-500">
-          📤
-        </button>
+        <Retweet tweetId={id} currentUser={currentUser} />
+        <Share tweetId={id} />
       </div>
     </div>
   );
 }
+
 
 
 
