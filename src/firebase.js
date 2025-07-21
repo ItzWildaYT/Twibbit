@@ -2,12 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCw9stJHZGVO89LXN0aYk2eFYf2y1oN8gI",
+  authDomain: "twibbit-566eb.firebaseapp.com",
+  projectId: "twibbit-566eb",
+  storageBucket: "twibbit-566eb.firebasestorage.app",
+  messagingSenderId: "398351874179",
+  appId: "1:398351874179:web:e1076ff7cccb6a56dfc3b6",
+  measurementId: "G-MEKWLJHTJE"
 };
 
 const app = initializeApp(firebaseConfig);
