@@ -15,6 +15,41 @@ import {
 // Modal for choosing a custom name
 function UsernameModal({ onSave }) {
   const [name, setName] = useState("");
+
+  // ✅ Add a simple list of banned words
+  const bannedWords = [
+    "niger",
+    "dickhead",
+    "shit",
+    "fuck",
+    "bitch",
+    "nigger",
+    "asshole",
+    // add more as you like
+  ];
+
+  function containsBadWord(input) {
+    const lower = input.toLowerCase();
+    return bannedWords.some((bw) => lower.includes(bw));
+  }
+
+  function handleSave() {
+    const trimmed = name.trim();
+
+    if (!trimmed) {
+      alert("Name cannot be empty");
+      return;
+    }
+
+    if (containsBadWord(trimmed)) {
+      alert("That name contains inappropriate language. Please choose another name.");
+      return;
+    }
+
+    // ✅ valid name
+    onSave(trimmed);
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-80">
@@ -26,13 +61,7 @@ function UsernameModal({ onSave }) {
           onChange={(e) => setName(e.target.value)}
         />
         <button
-          onClick={() => {
-            if (!name.trim()) {
-              alert("Name cannot be empty");
-              return;
-            }
-            onSave(name.trim());
-          }}
+          onClick={handleSave}
           className="bg-blue-500 text-white px-4 py-2 rounded w-full"
         >
           Save
@@ -41,6 +70,7 @@ function UsernameModal({ onSave }) {
     </div>
   );
 }
+
 
 function UnderConstruction() {
   return (
@@ -54,7 +84,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [needsName, setNeedsName] = useState(false);
   const [customName, setCustomName] = useState("");
-  const [showSidebar, setShowSidebar] = useState(false); // for mobile
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (currentUser) => {
@@ -93,7 +123,6 @@ export default function App() {
         {/* Top bar */}
         <header className="bg-white shadow p-3 md:p-4 flex justify-between items-center sticky top-0 z-40">
           <div className="flex items-center gap-3">
-            {/*Mobile menu button */}
             <button
               className="md:hidden p-2 rounded hover:bg-gray-100"
               onClick={() => setShowSidebar(true)}
@@ -106,11 +135,7 @@ export default function App() {
           </div>
           {user ? (
             <div className="flex items-center gap-3">
-              <img
-                src={user.photoURL}
-                alt=""
-                className="w-8 h-8 rounded-full"
-              />
+              <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full" />
               <button
                 onClick={logout}
                 className="bg-red-500 text-white px-3 py-1 rounded"
@@ -128,14 +153,11 @@ export default function App() {
           )}
         </header>
 
-        {/* Main grid */}
         <div className="grid grid-cols-12">
-          {/* Sidebar - hidden on small screens */}
           <div className="hidden md:block md:col-span-3 border-r min-h-screen">
             <Sidebar />
           </div>
 
-          {/* Feed */}
           <main className="col-span-12 md:col-span-6 max-w-2xl mx-auto p-2 md:p-4">
             <Routes>
               <Route
@@ -153,6 +175,7 @@ export default function App() {
                   )
                 }
               />
+              <Route path="/tweet/:tweetId" element={<TweetPage currentUser={user} />} /> {/* 👈 NEW */}
               <Route path="/explore" element={<UnderConstruction />} />
               <Route path="/notifications" element={<UnderConstruction />} />
               <Route path="/messages" element={<UnderConstruction />} />
@@ -161,13 +184,11 @@ export default function App() {
             </Routes>
           </main>
 
-          {/* Right Sidebar - hidden on small and medium screens */}
           <div className="hidden lg:block lg:col-span-3 border-l min-h-screen">
             <Rightbar />
           </div>
         </div>
 
-        {/*Mobile Sidebar Overlay */}
         {showSidebar && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
             <div className="bg-white w-64 h-full p-4">
@@ -182,7 +203,6 @@ export default function App() {
           </div>
         )}
 
-        {/*Bottom navigation (visible only on mobile) */}
         <nav className="fixed bottom-0 left-0 right-0 bg-white shadow p-2 flex justify-around md:hidden">
           <a href="/" className="p-2">🏠</a>
           <a href="/explore" className="p-2">🔍</a>
@@ -193,4 +213,3 @@ export default function App() {
     </Router>
   );
 }
-
