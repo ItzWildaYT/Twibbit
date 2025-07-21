@@ -9,14 +9,14 @@ export default function Feed({ user }) {
   useEffect(() => {
     const q = query(collection(db, "tweets"), orderBy("createdAt", "desc"));
     const unsub = onSnapshot(q, (snapshot) => {
-      setTweets(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setTweets(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsub();
   }, []);
 
   return (
     <div>
-      {tweets.map(t => (
+      {tweets.map((t) => (
         <Tweet
           key={t.id}
           id={t.id}
@@ -30,4 +30,5 @@ export default function Feed({ user }) {
     </div>
   );
 }
+
 
