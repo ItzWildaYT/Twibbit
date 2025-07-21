@@ -29,17 +29,20 @@ export async function logout() {
   await signOut(auth);
 }
 
-// ✅ Save user profile
-export async function saveUserProfile(user) {
+// ✅ Save user profile (with customName support)
+export async function saveUserProfile(user, customName = null) {
   if (!user) return;
+
   const userRef = doc(db, "users", user.uid);
   const existing = await getDoc(userRef);
+
   if (!existing.exists()) {
     await setDoc(userRef, {
       uid: user.uid,
-      name: user.displayName,
+      name: customName || user.displayName, // ✅ use custom name if provided
       photo: user.photoURL,
     });
   }
 }
+
 
