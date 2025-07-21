@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
 import { db } from "./firebase";
 
 export default function Retweet({ tweetId, currentUser }) {
@@ -16,7 +16,10 @@ export default function Retweet({ tweetId, currentUser }) {
   const retweeted = currentUser && retweets.includes(currentUser.uid);
 
   async function toggleRetweet() {
-    if (!currentUser) return;
+    if (!currentUser) {
+      alert("You must be signed in to retweet.");
+      return;
+    }
     const ref = doc(db, "tweets", tweetId);
     await updateDoc(ref, {
       retweets: retweeted
@@ -36,4 +39,5 @@ export default function Retweet({ tweetId, currentUser }) {
     </button>
   );
 }
+
 
