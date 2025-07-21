@@ -18,11 +18,25 @@ export default function App() {
         <h1 className="text-xl font-bold text-blue-500">Twibbit</h1>
         {user ? (
           <div className="flex items-center gap-3">
-            <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full" />
-            <button onClick={logout} className="bg-red-500 text-white px-3 py-1 rounded">Log out</button>
+            <img
+              src={user.photoURL}
+              alt=""
+              className="w-8 h-8 rounded-full"
+            />
+            <button
+              onClick={logout}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Log out
+            </button>
           </div>
         ) : (
-          <button onClick={loginWithGoogle} className="bg-blue-500 text-white px-3 py-1 rounded">Sign in with Google</button>
+          <button
+            onClick={loginWithGoogle}
+            className="bg-blue-500 text-white px-3 py-1 rounded"
+          >
+            Sign in with Google
+          </button>
         )}
       </header>
 
@@ -33,9 +47,12 @@ export default function App() {
             <Feed user={user} />
           </>
         ) : (
-          <p className="text-center mt-20">Sign in to post and like tweets.</p>
+          <p className="text-center mt-20">
+            Sign in to post and like tweets.
+          </p>
         )}
       </main>
     </div>
   );
 }
+
