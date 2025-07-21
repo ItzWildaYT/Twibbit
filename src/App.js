@@ -9,10 +9,15 @@ import Rightbar from "./Rightbar";
 export default function App() {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, setUser);
-    return unsub;
-  }, []);
+ useEffect(() => {
+  const unsub = onAuthStateChanged(auth, async (user) => {
+    setUser(user);
+    if (user) {
+      await saveUserProfile(user);
+    }
+  });
+  return unsub;
+}, []);
 
   return (
     <div className="bg-gray-100 min-h-screen text-gray-900">
