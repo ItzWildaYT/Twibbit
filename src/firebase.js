@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, setDoc, doc, getDoc } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 // ✅ Firebase config
 const firebaseConfig = {
@@ -29,20 +30,51 @@ export async function logout() {
   await signOut(auth);
 }
 
-// ✅ Save user profile (with customName support)
+// ✅ Save user profile (unique name + restricted words)
 export async function saveUserProfile(user, customName = null) {
   if (!user) return;
+  if (!customName || !customName.trim()) {
+    throw new Error("Name cannot be empty.");
+  }
 
+  const restrictedWords = ["Owner", "Co-Owner", "Moderator"];
+  const approvedUIDs = ["SxxIrBnF45PRwpHGsWcrsP4orNI2"];
+
+  // ✅ Check for restricted words
+  const hasRestricted = restrictedWords.some(word =>
+    customName.toLowerCase().includes(word.toLowerCase())
+  );
+  if (hasRestricted && !approvedUIDs.includes(user.uid)) {
+    throw new Error("You are not allowed to use that name.");
+  }
+
+  // ✅ Check if name is already taken (by someone else)
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, where("name", "==", customName));
+  const snap = await getDocs(q);
+
+  let taken = false;
+  snap.forEach(docSnap => {
+    if (docSnap.id !== user.uid) {
+      // someone else has this name
+      taken = true;
+    }
+  });
+
+  if (taken) {
+    throw new Error("That name is already taken.");
+  }
+
+  // ✅ Save only if not exists yet
   const userRef = doc(db, "users", user.uid);
   const existing = await getDoc(userRef);
 
   if (!existing.exists()) {
     await setDoc(userRef, {
       uid: user.uid,
-      name: customName || user.displayName, // ✅ use custom name if provided
+      name: customName,
       photo: user.photoURL,
     });
   }
 }
-
 
