@@ -57,9 +57,14 @@ export default function App() {
   }, []);
 
   async function handleSaveName(name) {
+  try {
     await saveUserProfile(user, name);
-    setNeedsName(false);
+    setNeedsName(false); // close the modal if successful
+  } catch (err) {
+    alert(err.message); // show the error (duplicate name, restricted word, etc.)
   }
+}
+
 
   return (
     <div className="bg-gray-100 min-h-screen text-gray-900">
