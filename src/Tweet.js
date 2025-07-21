@@ -4,6 +4,7 @@ import { db } from "./firebase";
 import Replies from "./Replies";
 import Retweet from "./Retweet";
 import Share from "./Share";
+const [showReplies, setShowReplies] = useState(false)
 
 export default function Tweet({
   id,
@@ -35,23 +36,32 @@ export default function Tweet({
       {/* Text */}
       <p className="mb-2">{text}</p>
 
-      {/* Actions */}
-      <div className="flex items-center gap-6 mt-2">
-        <Replies tweetId={id} currentUser={currentUser} />
-        <button
-          onClick={toggleLike}
-          className={`flex items-center gap-1 px-3 py-1 rounded transition ${
-            liked ? "bg-pink-500 text-white" : "bg-gray-200"
-          }`}
-        >
-          ❤️ {safeLikes.length}
-        </button>
-        <Retweet tweetId={id} currentUser={currentUser} />
-        <Share tweetId={id} />
-      </div>
-    </div>
-  );
-}
+<div className="flex items-center gap-6 mt-2">
+  {/* Reply */}
+  <button
+    onClick={() => setShowReplies(true)}
+    className="flex items-center gap-1 text-gray-600 hover:text-blue-500"
+  >
+    <img src="/reply-icon.png" alt="reply" className="w-5 h-5 inline-block" />
+    <span>0</span>
+  </button>
+
+  {/* Like */}
+  <button
+    onClick={toggleLike}
+    className={`flex items-center gap-1 px-3 py-1 rounded transition ${
+      liked ? "bg-pink-500 text-white" : "bg-gray-200"
+    }`}
+  >
+    ❤️ {safeLikes.length}
+  </button>
+
+  {/* Retweet */}
+  <Retweet tweetId={id} currentUser={currentUser} />
+
+  {/* Share */}
+  <Share tweetId={id} />
+</div>
 
 
 
