@@ -59,7 +59,7 @@ export default function Tweet({
           ❤️ {safeLikes.length}
         </button>
 
-        <Retweet tweetId={id} currentUser={currentUser} />
+        <Retweet tweetId={tweet.id} currentUser={user} customName={savedCustomName} />
         <Share tweetId={id} />
       </div>
 
