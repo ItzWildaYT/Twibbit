@@ -1,43 +1,58 @@
-import React, { useEffect, useState } from "react";
-import { doc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from "firebase/firestore";
+import React, { useState } from "react";
+import { collection, addDoc, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { db } from "./firebase";
 
 export default function Retweet({ tweetId, currentUser }) {
-  const [retweets, setRetweets] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const unsub = onSnapshot(doc(db, "tweets", tweetId), (snap) => {
-      const data = snap.data();
-      setRetweets(Array.isArray(data?.retweets) ? data.retweets : []);
-    });
-    return () => unsub();
-  }, [tweetId]);
+  async function handleRetweet() {
+    if (!currentUser) return;
+    setLoading(true);
 
-  const retweeted = currentUser && retweets.includes(currentUser.uid);
+    try {
+      // Get original tweet data
+      const originalSnap = await getDoc(doc(db, "tweets", tweetId));
+      if (!originalSnap.exists()) {
+        alert("Original tweet not found!");
+        setLoading(false);
+        return;
+      }
+      const originalData = originalSnap.data();
 
-  async function toggleRetweet() {
-    if (!currentUser) {
-      alert("You must be signed in to retweet.");
-      return;
+      // Create a new tweet that references the original
+      await addDoc(collection(db, "tweets"), {
+        text: originalData.text,
+        likes: [],
+        retweets: [],
+        userName: currentUser.customName || currentUser.displayName || "Anonymous",
+        userPhoto: currentUser.photoURL,
+        userId: currentUser.uid,
+        retweetOf: tweetId, // reference to original
+        originalAuthorName: originalData.userName,
+        originalAuthorPhoto: originalData.userPhoto,
+        originalAuthorId: originalData.userId,
+        createdAt: serverTimestamp(),
+      });
+
+      alert("Retweeted!");
+    } catch (err) {
+      console.error("Retweet error:", err);
+      alert("Failed to retweet. Try again later.");
     }
-    const ref = doc(db, "tweets", tweetId);
-    await updateDoc(ref, {
-      retweets: retweeted
-        ? arrayRemove(currentUser.uid)
-        : arrayUnion(currentUser.uid),
-    });
+
+    setLoading(false);
   }
 
   return (
     <button
-      onClick={toggleRetweet}
-      className={`flex items-center gap-1 px-3 py-1 rounded transition ${
-        retweeted ? "bg-green-500 text-white" : "bg-gray-200"
-      }`}
+      onClick={handleRetweet}
+      disabled={loading}
+      className="flex items-center gap-1 text-gray-600 hover:text-green-500"
     >
-      🔁 {retweets.length}
+      🔁 Retweet
     </button>
   );
 }
+
 
 
