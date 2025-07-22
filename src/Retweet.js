@@ -22,7 +22,7 @@ export default function Retweet({ tweetId, currentUser, customName }) {
         text: originalData.text,
         likes: [],
         retweets: [],
-        userName: customName || currentUser.displayName,
+        userName: customName,
         userPhoto: currentUser.photoURL,
         userId: currentUser.uid,
         retweetOf: tweetId,
