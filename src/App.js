@@ -168,7 +168,7 @@ export default function App() {
                   user ? (
                     <>
                       <TweetForm user={user} customName={customName} />
-                      <Feed user={user} />
+                      <Feed user={user} customName={customName} />
                     </>
                   ) : (
                     <p className="text-center mt-20">
