@@ -22,9 +22,11 @@ export default function Sidebar() {
       <Link to="/profile" className="flex items-center gap-3 hover:bg-gray-200 p-3 rounded-full">
         👤 Profile
       </Link>
-      <button className="bg-blue-500 text-white rounded-full py-3 mt-6 font-bold hover:bg-blue-600">
-        Post
-      </button>
+      <Link to="/" className="flex items-center gap-3 hover:bg-gray-200 p-3 rounded-full">
+  <button className="bg-blue-500 text-white rounded-full py-3 mt-6 font-bold hover:bg-blue-600">
+    Post
+  </button>
+</Link>
     </div>
   );
 }
