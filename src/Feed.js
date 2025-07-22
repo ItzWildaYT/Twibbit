@@ -3,7 +3,7 @@ import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "./firebase";
 import Tweet from "./Tweet";
 
-export default function Feed({ user }) {
+export default function Feed({ user, customName }) {   
   const [tweets, setTweets] = useState([]);
 
   useEffect(() => {
@@ -27,13 +27,13 @@ export default function Feed({ user }) {
             id={tweet.id}
             text={tweet.text}
             likes={tweet.likes}
-            userName={tweet.customName || tweet.userName}
+            userName={tweet.userName}
             userPhoto={tweet.userPhoto}
             currentUser={user}
+            customName={customName}  
           />
         </div>
       ))}
     </div>
   );
 }
-
