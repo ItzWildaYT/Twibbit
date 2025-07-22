@@ -12,6 +12,7 @@ export default function Tweet({
   userName = "Anonymous",
   userPhoto = "",
   currentUser,
+  savedCustomName
 }) {
   const [showReplies, setShowReplies] = useState(false);
 
@@ -30,7 +31,11 @@ export default function Tweet({
     <div className="bg-white p-4 rounded-lg shadow mb-4">
       <div className="flex items-center gap-2 mb-2">
         {userPhoto && (
-          <img src={userPhoto} alt="" className="w-8 h-8 rounded-full" />
+          <img
+            src={userPhoto}
+            alt=""
+            className="w-8 h-8 rounded-full"
+          />
         )}
         <span className="font-semibold">{userName}</span>
       </div>
@@ -59,7 +64,12 @@ export default function Tweet({
           ❤️ {safeLikes.length}
         </button>
 
-        <Retweet tweetId={tweet.id} currentUser={user} customName={savedCustomName} />
+        <Retweet
+          tweetId={id}
+          currentUser={currentUser}
+          customName={savedCustomName || currentUser?.displayName}
+        />
+
         <Share tweetId={id} />
       </div>
 
@@ -73,9 +83,3 @@ export default function Tweet({
     </div>
   );
 }
-
-
-
-
-
-
