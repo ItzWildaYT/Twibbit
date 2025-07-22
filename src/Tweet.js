@@ -28,7 +28,6 @@ export default function Tweet({
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-4">
-      {/* Header */}
       <div className="flex items-center gap-2 mb-2">
         {userPhoto && (
           <img src={userPhoto} alt="" className="w-8 h-8 rounded-full" />
@@ -36,13 +35,11 @@ export default function Tweet({
         <span className="font-semibold">{userName}</span>
       </div>
 
-      {/* Text */}
       <p className="mb-2">{text}</p>
 
       <div className="flex items-center gap-6 mt-2">
-        {/* Reply */}
         <button
-          onClick={() => setShowReplies((prev) => !prev)}
+          onClick={() => setShowReplies(true)}
           className="flex items-center gap-1 text-gray-600 hover:text-blue-500"
         >
           <img
@@ -53,7 +50,6 @@ export default function Tweet({
           <span>0</span>
         </button>
 
-        {/* Like */}
         <button
           onClick={toggleLike}
           className={`flex items-center gap-1 px-3 py-1 rounded transition ${
@@ -63,18 +59,21 @@ export default function Tweet({
           ❤️ {safeLikes.length}
         </button>
 
-        {/* Retweet */}
         <Retweet tweetId={id} currentUser={currentUser} />
-
-        {/* Share */}
         <Share tweetId={id} />
       </div>
 
-      {/* Replies */}
-      {showReplies && <Replies tweetId={id} />}
+      {showReplies && (
+        <Replies
+          tweetId={id}
+          currentUser={currentUser}
+          onClose={() => setShowReplies(false)}
+        />
+      )}
     </div>
   );
 }
+
 
 
 
