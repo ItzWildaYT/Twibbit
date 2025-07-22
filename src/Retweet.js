@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { collection, addDoc, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { db } from "./firebase";
 
-export default function Retweet({ tweetId, currentUser }) {
+export default function Retweet({ tweetId, currentUser, customName }) {
   const [loading, setLoading] = useState(false);
 
   async function handleRetweet() {
@@ -10,7 +10,6 @@ export default function Retweet({ tweetId, currentUser }) {
     setLoading(true);
 
     try {
-      // Get original tweet data
       const originalSnap = await getDoc(doc(db, "tweets", tweetId));
       if (!originalSnap.exists()) {
         alert("Original tweet not found!");
@@ -19,7 +18,6 @@ export default function Retweet({ tweetId, currentUser }) {
       }
       const originalData = originalSnap.data();
 
-      // Create a new tweet that references the original
       await addDoc(collection(db, "tweets"), {
         text: originalData.text,
         likes: [],
@@ -27,7 +25,7 @@ export default function Retweet({ tweetId, currentUser }) {
         userName: customName || currentUser.displayName,
         userPhoto: currentUser.photoURL,
         userId: currentUser.uid,
-        retweetOf: tweetId, // reference to original
+        retweetOf: tweetId,
         originalAuthorName: originalData.userName,
         originalAuthorPhoto: originalData.userPhoto,
         originalAuthorId: originalData.userId,
@@ -53,6 +51,3 @@ export default function Retweet({ tweetId, currentUser }) {
     </button>
   );
 }
-
-
-
