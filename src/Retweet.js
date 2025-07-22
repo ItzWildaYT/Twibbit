@@ -24,7 +24,7 @@ export default function Retweet({ tweetId, currentUser }) {
         text: originalData.text,
         likes: [],
         retweets: [],
-        userName: currentUser.customName || currentUser.displayName || "Anonymous",
+        userName: customName,
         userPhoto: currentUser.photoURL,
         userId: currentUser.uid,
         retweetOf: tweetId, // reference to original
