@@ -27,7 +27,7 @@ export default function Feed({ user }) {
             id={tweet.id}
             text={tweet.text}
             likes={tweet.likes}
-            userName={tweet.userName}
+            userName={tweet.customName || tweet.userName}
             userPhoto={tweet.userPhoto}
             currentUser={user}
           />
