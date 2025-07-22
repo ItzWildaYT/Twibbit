@@ -23,7 +23,7 @@ export default function Sidebar() {
         👤 Profile
       </Link>
       <Link to="/">
-        <button className="bg-blue-500 text-white rounded-full py-5 px-8 mt-6 font-bold text-lg hover:bg-blue-600">
+        <button className="bg-blue-500 text-white rounded-full py-7 px-8 mt-6 font-bold text-lg hover:bg-blue-600">
         Post
         </button>
       </Link>
