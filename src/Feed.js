@@ -16,19 +16,23 @@ export default function Feed({ user }) {
 
   return (
     <div>
-      {tweets.map((t) => (
-        <Tweet
-          key={t.id}
-          id={t.id}
-          text={t.text}
-          likes={t.likes}
-          userName={t.userName}
-          userPhoto={t.userPhoto}
-          currentUser={user}
-        />
+      {tweets.map((tweet) => (
+        <div key={tweet.id} className="border-b p-4">
+          {tweet.retweetOf && (
+            <p className="text-sm text-gray-500 mb-1">
+              🔁 Retweeted from {tweet.originalAuthorName}
+            </p>
+          )}
+          <Tweet
+            id={tweet.id}
+            text={tweet.text}
+            likes={tweet.likes}
+            userName={tweet.userName}
+            userPhoto={tweet.userPhoto}
+            currentUser={user}   {/* ✅ fix: pass the user prop */}
+          />
+        </div>
       ))}
     </div>
   );
 }
-
-
