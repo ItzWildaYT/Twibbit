@@ -29,10 +29,11 @@ export default function Feed({ user }) {
             likes={tweet.likes}
             userName={tweet.userName}
             userPhoto={tweet.userPhoto}
-            currentUser={user}   {/* ✅ fix: pass the user prop */}
+            currentUser={user}
           />
         </div>
       ))}
     </div>
   );
 }
+
