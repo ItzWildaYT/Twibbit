@@ -7,6 +7,7 @@ import Feed from "./Feed";
 import Sidebar from "./Sidebar";
 import Rightbar from "./Rightbar";
 import TweetPage from "./TweetPage";
+import Messages from "./Messages";
 
 import {
   BrowserRouter as Router,
@@ -180,7 +181,7 @@ export default function App() {
               <Route path="/tweet/:tweetId" element={<TweetPage currentUser={user} />} /> {/* 👈 NEW */}
               <Route path="/explore" element={<UnderConstruction />} />
               <Route path="/notifications" element={<UnderConstruction />} />
-              <Route path="/messages" element={<UnderConstruction />} />
+              <Route path="/messages" element={<Messages />} />
               <Route path="/bookmarks" element={<UnderConstruction />} />
               <Route path="/profile" element={<UnderConstruction />} />
             </Routes>
