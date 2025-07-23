@@ -78,3 +78,80 @@ export async function saveUserProfile(user, customName = null) {
   }
 }
 
+// ====== Messaging Helpers ======
+
+// Create a conversation between two users, or return existing
+export async function createConversation(currentUserId, otherUserId) {
+  const conversationsRef = collection(db, "conversations");
+  const q = query(
+    conversationsRef,
+    where("participants", "array-contains", currentUserId)
+  );
+  const snapshot = await getDocs(q);
+  
+  // Check for existing conversation with the other user
+  let existingConv = null;
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (
+      data.participants.length === 2 &&
+      data.participants.includes(otherUserId)
+    ) {
+      existingConv = { id: docSnap.id, ...data };
+    }
+  });
+
+  if (existingConv) {
+    return existingConv.id;
+  } else {
+    // Create new conversation
+    const docRef = await addDoc(conversationsRef, {
+      participants: [currentUserId, otherUserId],
+      createdAt: serverTimestamp(),
+    });
+    return docRef.id;
+  }
+}
+
+// Send a message in a conversation
+export async function sendMessage(conversationId, currentUserId, text) {
+  if (!text.trim()) return;
+  const messagesRef = collection(db, "conversations", conversationId, "messages");
+  await addDoc(messagesRef, {
+    text: text.trim(),
+    userId: currentUserId,
+    createdAt: serverTimestamp(),
+  });
+}
+
+// Subscribe to conversations for current user
+export function subscribeToConversations(currentUserId, callback) {
+  const conversationsRef = collection(db, "conversations");
+  const q = query(
+    conversationsRef,
+    where("participants", "array-contains", currentUserId),
+    orderBy("createdAt", "desc")
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    const conversations = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    callback(conversations);
+  });
+}
+
+// Subscribe to messages in a conversation
+export function subscribeToMessages(conversationId, callback) {
+  const messagesRef = collection(db, "conversations", conversationId, "messages");
+  const q = query(messagesRef, orderBy("createdAt", "asc"));
+
+  return onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    callback(messages);
+  });
+}
