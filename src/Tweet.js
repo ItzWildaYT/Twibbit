@@ -12,7 +12,8 @@ export default function Tweet({
   userName = "Anonymous",
   userPhoto = "",
   currentUser,
-  savedCustomName
+  savedCustomName,
+  customName
 }) {
   const [showReplies, setShowReplies] = useState(false);
 
