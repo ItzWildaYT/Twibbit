@@ -181,7 +181,7 @@ export default function App() {
               <Route path="/tweet/:tweetId" element={<TweetPage currentUser={user} />} /> {/* 👈 NEW */}
               <Route path="/explore" element={<UnderConstruction />} />
               <Route path="/notifications" element={<UnderConstruction />} />
-              <Route path="/messages" element={<Messages />} />
+              <Route path="/messages" element={<Messages currentUser={user} />} />
               <Route path="/bookmarks" element={<UnderConstruction />} />
               <Route path="/profile" element={<UnderConstruction />} />
             </Routes>
