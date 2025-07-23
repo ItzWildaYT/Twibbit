@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+  addDoc,
+  serverTimestamp,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
-import { collection, query, where, onSnapshot, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
 import { findUserByName, startConversation } from "./conversationHelpers";
 
 export default function Messages({ currentUser }) {
@@ -10,47 +20,66 @@ export default function Messages({ currentUser }) {
   const [newMessage, setNewMessage] = useState("");
   const [searchName, setSearchName] = useState("");
 
-  // 🔥 Fetch all conversations for this user
   useEffect(() => {
     if (!currentUser) return;
-    const q = query(collection(db, "conversations"), where("participants", "array-contains", currentUser.uid));
+
+    const q = query(
+      collection(db, "conversations"),
+      where("participants", "array-contains", currentUser.uid)
+    );
+
     const unsub = onSnapshot(q, (snap) => {
-      setConversations(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setConversations(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
+
     return () => unsub();
   }, [currentUser]);
 
-  // 🔥 Fetch messages for active conversation
   useEffect(() => {
     if (!activeConversation) return;
+
     const q = query(
       collection(db, "conversations", activeConversation, "messages"),
       orderBy("createdAt", "asc")
     );
+
     const unsub = onSnapshot(q, (snap) => {
-      setMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setMessages(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
+
     return () => unsub();
   }, [activeConversation]);
 
   async function handleSend(e) {
     e.preventDefault();
     if (!newMessage.trim() || !activeConversation) return;
+
     await addDoc(collection(db, "conversations", activeConversation, "messages"), {
       text: newMessage.trim(),
       senderId: currentUser.uid,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
     });
+
+    const convRef = doc(db, "conversations", activeConversation);
+    await updateDoc(convRef, { lastMessage: newMessage.trim() });
+
     setNewMessage("");
   }
 
   async function handleStartChat() {
     if (!searchName.trim()) return;
+
     const otherUser = await findUserByName(searchName.trim());
     if (!otherUser) {
       alert("User not found");
       return;
     }
+
+    if (otherUser.uid === currentUser.uid) {
+      alert("You cannot chat with yourself.");
+      return;
+    }
+
     const convId = await startConversation(currentUser.uid, otherUser.uid);
     setActiveConversation(convId);
     setSearchName("");
@@ -58,7 +87,6 @@ export default function Messages({ currentUser }) {
 
   return (
     <div className="flex h-screen">
-      {/* Left sidebar: conversation list and new chat */}
       <div className="w-1/3 border-r p-4 overflow-y-auto">
         <h2 className="font-bold text-lg mb-4">Messages</h2>
 
@@ -69,39 +97,49 @@ export default function Messages({ currentUser }) {
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
           />
-          <button onClick={handleStartChat} className="bg-blue-500 text-white px-3 py-1 rounded">
+          <button
+            onClick={handleStartChat}
+            className="bg-blue-500 text-white px-3 py-1 rounded"
+          >
             Start Chat
           </button>
         </div>
 
-        {conversations.map(c => (
+        {conversations.map((c) => (
           <div
             key={c.id}
             onClick={() => setActiveConversation(c.id)}
-            className={`p-2 mb-2 rounded cursor-pointer ${activeConversation === c.id ? "bg-blue-100" : "hover:bg-gray-200"}`}
+            className={`p-2 mb-2 rounded cursor-pointer ${
+              activeConversation === c.id ? "bg-blue-100" : "hover:bg-gray-200"
+            }`}
           >
-            <div className="font-medium">Conversation</div>
-            <div className="text-sm text-gray-500">{c.lastMessage}</div>
+            <div className="font-medium">
+              Conversation with{" "}
+              {c.participants
+                .filter((id) => id !== currentUser.uid)
+                .join(", ")}
+            </div>
+            <div className="text-sm text-gray-500">{c.lastMessage || "No messages yet"}</div>
           </div>
         ))}
       </div>
 
-      {/* Right pane: messages */}
       <div className="flex-1 flex flex-col">
         {activeConversation ? (
           <>
             <div className="flex-1 p-4 overflow-y-auto">
-              {messages.map(m => (
+              {messages.map((m) => (
                 <div
                   key={m.id}
-                  className={`mb-2 ${m.senderId === currentUser.uid ? "text-right" : "text-left"}`}
+                  className={`mb-2 ${
+                    m.senderId === currentUser.uid ? "text-right" : "text-left"
+                  }`}
                 >
-                  <span className="inline-block bg-gray-200 p-2 rounded">
-                    {m.text}
-                  </span>
+                  <span className="inline-block bg-gray-200 p-2 rounded">{m.text}</span>
                 </div>
               ))}
             </div>
+
             <form onSubmit={handleSend} className="p-4 border-t flex">
               <input
                 className="border flex-1 p-2 rounded mr-2"
@@ -109,9 +147,7 @@ export default function Messages({ currentUser }) {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
               />
-              <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                Send
-              </button>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded">Send</button>
             </form>
           </>
         ) : (
